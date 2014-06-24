@@ -1,5 +1,7 @@
 # Capistrano Notifier [![Build Status](https://secure.travis-ci.org/cramerdev/capistrano-notifier.png)](https://secure.travis-ci.org/cramerdev/capistrano-notifier)
 
+## This fork
+This fork of capistrano-notifier contains a somewhat hacked up set of patches to support capistrano 3.x. --zach
 
 ## Install
 

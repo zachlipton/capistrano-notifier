@@ -1,24 +1,19 @@
 class Capistrano::Notifier::Base
-  def initialize(capistrano)
-    @cap = capistrano
+  def initialize()
   end
 
   private
 
   def application
-    cap.application
+    fetch :application
   end
 
   def branch
-    cap.respond_to?(:branch) ? cap.branch : 'master'
-  end
-
-  def cap
-    @cap
+    fetch :branch
   end
 
   def git_current_revision
-    cap.current_revision.try(:[], 0,7) if cap.respond_to?(:current_revision)
+    fetch(:current_revision).try(:[], 0,7)
   end
 
   def git_log
@@ -28,7 +23,7 @@ class Capistrano::Notifier::Base
   end
 
   def git_previous_revision
-    cap.previous_revision.try(:[], 0,7) if cap.respond_to?(:previous_revision)
+    fetch(:previous_revision).try(:[], 0,7)
   end
 
   def git_range
@@ -42,19 +37,11 @@ class Capistrano::Notifier::Base
   end
 
   def stage
-    cap.stage if cap.respond_to? :stage
+    fetch :stage
   end
 
   def user_name
     user = ENV['DEPLOYER']
     user = `git config --get user.name`.strip if user.nil?
-  end
-end
-
-# Band-aid for issue with Capistrano
-# https://github.com/capistrano/capistrano/issues/168#issuecomment-4144687
-Capistrano::Configuration::Namespaces::Namespace.class_eval do
-  def capture(*args)
-    parent.capture *args
   end
 end

@@ -37,22 +37,7 @@ end
 
 class Capistrano::Notifier::Mail < Capistrano::Notifier::Base
   def self.load_into(configuration)
-    configuration.load do
-      namespace :deploy do
-        namespace :notify do
-          desc 'Send a deployment notification via email.'
-          task :mail do
-            Capistrano::Notifier::Mail.new(configuration).perform
-
-            if configuration.notifier_mail_options[:method] == :test
-              puts ActionMailer::Base.deliveries
-            end
-          end
-        end
-      end
-
-      after 'deploy:restart', 'deploy:notify:mail'
-    end
+    load File.expand_path("../../tasks/notifier.rake", __FILE__)
   end
 
   def perform
@@ -76,15 +61,15 @@ class Capistrano::Notifier::Mail < Capistrano::Notifier::Base
   end
 
   def email_template
-    cap.notifier_mail_options[:template] || "mail.#{format.to_s}.erb"
+    fetch(:notifier_mail_options)[:template] || "mail.#{format.to_s}.erb"
   end
 
   def format
-    cap.notifier_mail_options[:format] || :text
+    fetch(:notifier_mail_options)[:format] || :text
   end
 
   def from
-    cap.notifier_mail_options[:from]
+    fetch(:notifier_mail_options)[:from]
   end
 
   def git_commit_prefix
@@ -100,23 +85,23 @@ class Capistrano::Notifier::Mail < Capistrano::Notifier::Base
   end
 
   def github
-    cap.notifier_mail_options[:github]
+    fetch(:notifier_mail_options)[:github]
   end
 
   def giturl
-    cap.notifier_mail_options[:giturl]
+    fetch(:notifier_mail_options)[:giturl]
   end
 
   def notify_method
-    cap.notifier_mail_options[:method]
+    fetch(:notifier_mail_options)[:method]
   end
 
   def smtp_settings
-    cap.notifier_mail_options[:smtp_settings]
+    fetch(:notifier_mail_options)[:smtp_settings]
   end
 
   def subject
-    cap.notifier_mail_options[:subject] || "#{application.titleize} branch #{branch} deployed to #{stage}"
+    fetch(:notifier_mail_options)[:subject] || "#{application.titleize} branch #{branch} deployed to #{stage}"
   end
 
   def template(template_name)
@@ -130,7 +115,7 @@ class Capistrano::Notifier::Mail < Capistrano::Notifier::Base
   end
 
   def templates_path
-    cap.notifier_mail_options[:templates_path] || 'config/deploy/templates'
+    fetch(:notifier_mail_options)[:templates_path] || 'config/deploy/templates'
   end
 
   def text
@@ -138,10 +123,10 @@ class Capistrano::Notifier::Mail < Capistrano::Notifier::Base
   end
 
   def to
-    cap.notifier_mail_options[:to]
+    fetch(:notifier_mail_options)[:to]
   end
 end
 
-if Capistrano::Configuration.instance
-  Capistrano::Notifier::Mail.load_into(Capistrano::Configuration.instance)
+if Capistrano::Configuration.env
+  Capistrano::Notifier::Mail.load_into(Capistrano::Configuration.env)
 end
