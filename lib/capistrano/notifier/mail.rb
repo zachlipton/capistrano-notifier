@@ -57,7 +57,7 @@ class Capistrano::Notifier::Mail < Capistrano::Notifier::Base
 
   def perform_with_action_mailer(notifier = Capistrano::Notifier::Mailer)
     notifier.smtp_settings = smtp_settings
-    notifier.notice(text, from, subject, to, notify_method, format).deliver
+    notifier.notice(text, from, subject, to, notify_method, format).deliver_now
   end
 
   def email_template
